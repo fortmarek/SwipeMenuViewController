@@ -436,6 +436,7 @@ extension TabView {
                 self.updateAdditionViewPosition(index: index)
             }, completion: completion)
         } else {
+            completion?(true)
             updateAdditionViewPosition(index: index)
         }
     }
@@ -530,16 +531,21 @@ extension TabView {
             let index: Int = itemViews.firstIndex(of: itemView),
             currentIndex != index else { return }
         tabViewDelegate?.tabView(self, willSelectTabAt: index)
-        moveTabItem(index: index, animated: true)
-        update(index)
-        tabViewDelegate?.tabView(self, didSelectTabAt: index)
+        moveTabItem(index: index, animated: true) { [weak self] finished in
+            guard
+                let self = self,
+                finished
+            else { return }
+            self.update(index)
+            self.tabViewDelegate?.tabView(self, didSelectTabAt: index)
+        }
     }
 
-    private func moveTabItem(index: Int, animated: Bool) {
+    private func moveTabItem(index: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
 
         switch options.addition {
         case .underline, .circle:
-            animateAdditionView(index: index, animated: animated, completion: nil)
+            animateAdditionView(index: index, animated: animated, completion: completion)
         case .none:
             update(index)
         }
