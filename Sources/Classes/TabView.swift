@@ -164,6 +164,7 @@ open class TabView: UIScrollView {
         switch options.style {
         case .flexible:
             containerView.distribution = .fill
+            containerView.spacing = 20
         case .segmented:
             containerView.distribution = .fillEqually
         }
@@ -191,10 +192,10 @@ open class TabView: UIScrollView {
         case .segmented:
             if #available(iOS 11.0, *), options.isSafeAreaEnabled {
                 contentSize = CGSize(width: frame.width, height: options.height)
-                containerView .frame = CGRect(x: 0, y: options.margin + safeAreaInsets.left, width: frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right, height: containerHeight)
+                containerView.frame = CGRect(x: 0, y: options.margin + safeAreaInsets.left, width: frame.width - options.margin * 2 - safeAreaInsets.left - safeAreaInsets.right, height: containerHeight)
             } else {
                 contentSize = CGSize(width: frame.width, height: options.height)
-                containerView .frame = CGRect(x: 0, y: options.margin, width: frame.width - options.margin * 2, height: containerHeight)
+                containerView.frame = CGRect(x: 0, y: options.margin, width: frame.width - options.margin * 2, height: containerHeight)
             }
         }
 
@@ -234,7 +235,7 @@ open class TabView: UIScrollView {
 
                     NSLayoutConstraint.activate([
                         tabItemView.widthAnchor.constraint(equalToConstant: adjustCellSize.width)
-                        ])
+                    ])
                 } else {
                     containerView.addArrangedSubview(tabItemView)
 
@@ -262,6 +263,9 @@ open class TabView: UIScrollView {
                 ])
 
             xPosition += tabItemView.frame.size.width
+            if index != itemCount - 1 {
+                xPosition += containerView.spacing
+            }
         }
 
         layout(containerView: containerView, containerWidth: xPosition)
@@ -353,7 +357,8 @@ extension TabView {
             let itemView = itemViews[currentIndex]
             additionView = UIView(frame: CGRect(x: itemView.frame.origin.x + options.additionView.padding.left, y: itemView.frame.height - options.additionView.padding.vertical, width: itemView.frame.width - options.additionView.padding.horizontal, height: options.additionView.underline.height))
             additionView.backgroundColor = options.additionView.backgroundColor
-            containerView.addSubview(additionView)
+            additionView.layer.cornerRadius = options.additionView.underline.cornerRadius
+            containerView.insertSubview(additionView, belowSubview: itemView)
         case .circle:
             let itemView = itemViews[currentIndex]
             let height = itemView.bounds.height - options.additionView.padding.vertical

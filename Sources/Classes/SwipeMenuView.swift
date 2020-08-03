@@ -42,6 +42,8 @@ public struct SwipeMenuViewOptions {
             public struct Underline {
                 /// Underline height if addition style select `.underline`. Defaults to `2.0`.
                 public var height: CGFloat = 2.0
+                /// Underline corner radius if addition style select `.underline`. Defaults to `0.0`.
+                public var cornerRadius: CGFloat = 0.0
             }
             
             public struct Circle {
